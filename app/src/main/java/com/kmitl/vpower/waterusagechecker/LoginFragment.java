@@ -13,8 +13,12 @@ import android.widget.EditText;
 
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 
 public class LoginFragment extends Fragment{
+
+    FirebaseAuth auth;
 
     @Nullable
     @Override
