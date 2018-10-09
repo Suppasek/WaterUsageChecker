@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "964861983354",
+    "firebase_url": "https://waterusagechecker.firebaseio.com",
+    "project_id": "waterusagechecker",
+    "storage_bucket": "waterusagechecker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964861983354:android:cab9d96c9d167659",
+        "android_client_info": {
+          "package_name": "com.kmitl.vpower.waterusagechecker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964861983354-h6evkc8vrvgqrt69ob1126p75kgn7eqs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrirn6s_i5ppjTIJszRFw6704lvX0wi48"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
