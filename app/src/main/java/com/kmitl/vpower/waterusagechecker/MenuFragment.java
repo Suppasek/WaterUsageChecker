@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -66,8 +67,8 @@ public class MenuFragment extends Fragment {
                 }
 
                 else if(menu.get(i).equals("Sign Out")){
-                    //FirebaseAuth logout = FirebaseAuth.getInstance();
-                    //logout.signOut();
+                    FirebaseAuth userAuth = FirebaseAuth.getInstance();
+                    userAuth.signOut();
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.main_view, new LoginFragment())

@@ -13,12 +13,15 @@ import android.widget.EditText;
 
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
 public class LoginFragment extends Fragment{
 
-    FirebaseAuth auth;
+    FirebaseAuth userAuth;
 
     @Nullable
     @Override
@@ -30,6 +33,7 @@ public class LoginFragment extends Fragment{
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        userAuth = FirebaseAuth.getInstance();
         initLoginBTN();
         super.onActivityCreated(savedInstanceState);
     }
@@ -54,44 +58,29 @@ public class LoginFragment extends Fragment{
                             Toast.LENGTH_SHORT
                     ).show();
 
-                    /////////////////////BYPASS
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.main_view, new MenuFragment()).addToBackStack(null)
-                            .commit();
-                    ///////////////////don't forget delete
-
                     Log.d("USER", "USER OR PASSWORD IS EMPTY");
+                }
+                else {
+                    userAuth.signInWithEmailAndPassword(userID_str, pass_str).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            //if(userAuth.getCurrentUser().isEmailVerified()){
+                                getActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.main_view,new MenuFragment())
+                                        .commit();
+                            //}
 
-
-//                } else {
-//                    userAuth.signInWithEmailAndPassword(userID_str, pass_str).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-//                        @Override
-//                        public void onSuccess(AuthResult authResult) {
-//                            if(userAuth.getCurrentUser().isEmailVerified()){
-//                                getActivity().getSupportFragmentManager()
-//                                        .beginTransaction()
-//                                        .replace(R.id.main_view,new MenuFragment())
-//                                        .commit();
-//                            }
-//                            else{
-//                                Toast.makeText(getActivity(),
-//                                        "Please verify your E-mail",
-//                                        Toast.LENGTH_SHORT
-//                                ).show();
-//                            }
-//
-//
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(getActivity(),
-//                                    "กรุณาระบุ USER OR PASSWORD ให้ถูกต้อง",
-//                                    Toast.LENGTH_SHORT
-//                            ).show();
-//                        }
-//                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(),
+                                    "กรุณาระบุ USER OR PASSWORD ให้ถูกต้อง",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    });
 
 
 

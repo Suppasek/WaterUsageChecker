@@ -13,7 +13,56 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="month" />
 
+            <Spinner
+                android:id="@+id/water_record_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+
+            <TextView
+                android:id="@+id/year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="year" />
+
+            <Spinner
+                android:id="@+id/water_record_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+
+            <TextView
+                android:id="@+id/room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="room" />
+
+            <Spinner
+                android:id="@+id/water_record_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+
+            <EditText
+                android:id="@+id/water_record_meter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="meter" />
+
+            <Button
+                android:id="@+id/water_record_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="add" />
 
         </LinearLayout>
 
