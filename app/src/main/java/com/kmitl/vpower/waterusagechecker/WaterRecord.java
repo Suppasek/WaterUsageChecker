@@ -5,26 +5,26 @@ import java.util.Calendar;
 
 public class WaterRecord {
 
-    private int waterMeter;
+    private int recordNo;
+    private int recordUnit;
     private String recordDate;
     private String year;
     private String month;
-    private String room;
+    private String houseNo;
+    private String signature;
 
-    public WaterRecord(int waterMeter, String year, String month, String room) {
-        this.setWaterMeter(waterMeter);
+    public WaterRecord() {
+
+    }
+
+    public WaterRecord(int recordUnit, String year, String month, String houseNo, String signature, int recordNo) {
+        setRecordUnit(recordUnit);
         setRecordDate(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Calendar.getInstance().getTime()));
-        this.setYear(year);
-        this.setMonth(month);
-        this.setRoom(room);
-    }
-
-    public int getWaterMeter() {
-        return waterMeter;
-    }
-
-    public void setWaterMeter(int waterMeter) {
-        this.waterMeter = waterMeter;
+        setYear(year);
+        setMonth(month);
+        setSignature(signature);
+        setHouseNo(houseNo);
+        setRecordNo(recordNo);
     }
 
     public String getRecordDate() {
@@ -51,11 +51,35 @@ public class WaterRecord {
         this.month = month;
     }
 
-    public String getRoom() {
-        return room;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public int getRecordUnit() {
+        return recordUnit;
+    }
+
+    public void setRecordUnit(int recordUnit) {
+        this.recordUnit = recordUnit;
+    }
+
+    public String getHouseNo() {
+        return houseNo;
+    }
+
+    public void setHouseNo(String houseNo) {
+        this.houseNo = houseNo;
+    }
+
+    public int getRecordNo() {
+        return recordNo;
+    }
+
+    public void setRecordNo(int recordNo) {
+        this.recordNo = recordNo;
     }
 }

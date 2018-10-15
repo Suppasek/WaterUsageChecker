@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/month"
@@ -19,54 +11,90 @@
                 android:layout_height="wrap_content"
                 android:text="month" />
 
-            <Spinner
-                android:id="@+id/water_record_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+    <Spinner
+        android:id="@+id/water_record_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/month"
+        tools:layout_editor_absoluteX="0dp">
 
-            </Spinner>
+    </Spinner>
 
-            <TextView
-                android:id="@+id/year"
+    <TextView
+        android:id="@+id/year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="year"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_month"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Spinner
+        android:id="@+id/water_record_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/year"
+        tools:layout_editor_absoluteX="0dp">
+
+    </Spinner>
+
+    <TextView
+        android:id="@+id/room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="room"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_year"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Spinner
+        android:id="@+id/water_record_room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/room"
+        tools:layout_editor_absoluteX="0dp">
+
+    </Spinner>
+
+    <EditText
+        android:id="@+id/water_record_meter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="meter"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_room"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/water_record_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="add"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_meter"
+        tools:layout_editor_absoluteX="0dp"
+        />
+
+            <FrameLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/water_record_progressBarHolder"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="year" />
+                android:layout_height="match_parent"
+                android:alpha="0.4"
+                android:background="@android:color/black"
+                android:clickable="true"
+                android:visibility="gone">
 
-            <Spinner
-                android:id="@+id/water_record_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:id="@+id/water_record_progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
-            </Spinner>
-
-            <TextView
-                android:id="@+id/room"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="room" />
-
-            <Spinner
-                android:id="@+id/water_record_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </Spinner>
-
-            <EditText
-                android:id="@+id/water_record_meter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="meter" />
-
-            <Button
-                android:id="@+id/water_record_add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="add" />
-
-        </LinearLayout>
-
-    </ScrollView>
-
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

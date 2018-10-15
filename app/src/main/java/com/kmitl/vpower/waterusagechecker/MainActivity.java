@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
             userAuth = FirebaseAuth.getInstance();
             user = userAuth.getCurrentUser();
 
+
             if (savedInstanceState == null){
                 if(user == null){
                     getSupportFragmentManager()

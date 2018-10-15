@@ -17,11 +17,17 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class LoginFragment extends Fragment{
 
     FirebaseAuth userAuth;
+    FirebaseFirestore mdb;
 
     @Nullable
     @Override
@@ -34,6 +40,7 @@ public class LoginFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         userAuth = FirebaseAuth.getInstance();
+        mdb = FirebaseFirestore.getInstance();
         initLoginBTN();
         super.onActivityCreated(savedInstanceState);
     }
@@ -71,6 +78,8 @@ public class LoginFragment extends Fragment{
                                         .commit();
                             //}
 
+                            setUserProfile();
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -82,12 +91,24 @@ public class LoginFragment extends Fragment{
                         }
                     });
 
-
-
                     Log.d("USER", "INVALID USER NAME OR PASSWORD");
                 }
             }
         });
+    }
+
+    void setUserProfile() {
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference docRef = mdb.collection("users").document(firebaseUser.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(user.getName()).build();
+                firebaseUser.updateProfile(profileUpdates);
+            }
+        });
+
     }
 
 }
