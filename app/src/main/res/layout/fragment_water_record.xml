@@ -15,9 +15,11 @@
         android:id="@+id/water_record_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/month"
-        tools:layout_editor_absoluteX="0dp">
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/month">
 
     </Spinner>
 
@@ -27,16 +29,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="year"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_month"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintStart_toEndOf="@+id/water_record_month"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_month" />
 
     <Spinner
         android:id="@+id/water_record_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/year"
-        tools:layout_editor_absoluteX="0dp">
+        app:layout_constraintStart_toStartOf="@+id/year"
+        app:layout_constraintTop_toBottomOf="@+id/year">
 
     </Spinner>
 
@@ -46,16 +50,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="room"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_year"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintStart_toEndOf="@+id/water_record_year"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_year" />
 
     <Spinner
         android:id="@+id/water_record_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/room"
-        tools:layout_editor_absoluteX="0dp">
+        app:layout_constraintStart_toStartOf="@+id/room"
+        app:layout_constraintTop_toBottomOf="@+id/room">
 
     </Spinner>
 
@@ -63,10 +69,12 @@
         android:id="@+id/water_record_meter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:hint="meter"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_room"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintStart_toStartOf="@+id/room"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_room" />
 
     <Button
         android:id="@+id/water_record_add"
@@ -74,9 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="add"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_meter"
-        tools:layout_editor_absoluteX="0dp"
-        />
+        app:layout_constraintStart_toStartOf="@+id/water_record_meter"
+        app:layout_constraintTop_toBottomOf="@+id/water_record_meter" />
 
             <FrameLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
