@@ -16,7 +16,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/login_top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
@@ -34,7 +34,7 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/login_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipChildren="false"
@@ -42,10 +42,8 @@
         android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
 
 
         <!--<EditText-->
@@ -95,44 +93,50 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="355dp"
-        android:layout_height="175dp"
+    <android.support.v7.widget.CardView
+        android:id="@+id/credentials_card"
+        android:layout_width="0dp"
+        android:layout_height="281dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginStart="14dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/border"
         android:orientation="vertical"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardElevation="0dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardCornerRadius="6dp"
+        app:cardUseCompatPadding="true"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout4"
-        app:layout_constraintVertical_bias="0.76">
+        app:layout_constraintTop_toTopOf="@+id/login_top"
+        app:layout_constraintVertical_bias="0.866">
 
-    </LinearLayout>
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/border">
+
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/border"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Login!"
+        app:layout_constraintBottom_toBottomOf="@+id/credentials_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.586" />
+        app:layout_constraintTop_toBottomOf="@+id/credentials_card" />
 
 
 </android.support.constraint.ConstraintLayout>
