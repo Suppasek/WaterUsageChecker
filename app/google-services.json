@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "964861983354-m6sm4hab77opdme3cukrq16esno7i7nr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kmitl.vpower.waterusagechecker",
+            "certificate_hash": "a33870a0cb0ef2d9770c30e0dfb4e893371ca91b"
+          }
+        },
+        {
           "client_id": "964861983354-h6evkc8vrvgqrt69ob1126p75kgn7eqs.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964861983354-h6evkc8vrvgqrt69ob1126p75kgn7eqs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
