@@ -200,40 +200,37 @@ public class WaterRecordFragment extends Fragment {
     private void pushRecord() {
         String monthFormat = year + "_" + month;
         int unit = Integer.parseInt(unitStr);
-        int price;
-        if (previousUnit != 0) {
-            price = (unit - previousUnit) * rate;
-            Log.wtf("WRF", unit + " - " + previousUnit + " * " + rate);
+        int price = (unit - previousUnit) * rate;
+        Log.wtf("WRF", unit + " - " + previousUnit + " * " + rate);
+        if (recordNo == 1 || (unit >= previousUnit)) {
+            if (previousRecordNo != 0) {
+                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), previousRecordNo, price);
+                previousRecordNo = 0;
+            } else {
+                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
+            }
+            mdb.collection("rooms")
+                    .document("house_no " + room)
+                    .collection("water_usage")
+                    .document(monthFormat)
+                    .set(record).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.wtf("WRF", "month " + month + " year " + year + " record no " + recordNo);
+                    setProgressBar(false);
+                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), "Failure", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         else {
-            Log.wtf("WRF", "first month");
-            price = 0;
+            setProgressBar(false);
+            Toast.makeText(getActivity(), "ยูนิทเดือนปัจจุบันต้องมากกว่าหรือเท่ากับยูนิทเดือนที่แล้ว", Toast.LENGTH_SHORT).show();
         }
-        if (previousRecordNo != 0) {
-            record = new WaterRecord(unit, year, month, room, user.getDisplayName(), previousRecordNo, price);
-            previousRecordNo = 0;
-        }
-        else {
-            record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
-        }
-        mdb.collection("rooms")
-                .document("house_no " + room)
-                .collection("water_usage")
-                .document(monthFormat)
-                .set(record).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.wtf("WRF", "month " + month + " year " + year + " record no " + recordNo);
-                setProgressBar(false);
-                Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "Failure", Toast.LENGTH_SHORT).show();
-            }
-        });
-
     }
 
     private void setProgressBar(Boolean on) {
