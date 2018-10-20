@@ -58,8 +58,9 @@ public class WaterRecordFragment extends Fragment {
     private String year;
     private int recordNo;
     private int rate;
-    private int previousUnit;
-
+    private int previousUnit = 0;
+    private int previousRecordNo = 0;
+    private boolean recordExist = false;
 
     @Nullable
     @Override
@@ -130,37 +131,55 @@ public class WaterRecordFragment extends Fragment {
     }
 
     private void getPreviousRecord() {
-        room = roomSpinner.getSelectedItem().toString();
-        colRef = mdb.collection("rooms").document("house_no " + room).collection("water_usage");
-        colRef.whereEqualTo("year", year).whereEqualTo("month", month).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        if (recordExist) {
+            Log.wtf("WRF", "create new record");
+            createRecord();
+        }
+        else {
+            room = roomSpinner.getSelectedItem().toString();
+            colRef = mdb.collection("rooms").document("house_no " + room).collection("water_usage");
+            colRef.whereEqualTo("year", year).whereEqualTo("month", month).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull final Task<QuerySnapshot> task1) {
+                    if (task1.isSuccessful() && !task1.getResult().isEmpty()) {
+                        //Record already exist
+                        mdb.collection("rooms").document("house_no " + room).collection("water_usage").document(year + "_" + month).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                previousRecordNo = Integer.parseInt(task1.getResult().getDocuments().get(0).get("recordNo").toString());
+                                recordExist = true;
+                                Log.wtf("WRF", "record = " + recordNo + " delete previous record");
+                                getPreviousRecord();
+                            }
+                        });
+                    } else if (task1.isSuccessful()) {
+                        createRecord();
+                    }
+                }
+            });
+
+        }
+    }
+
+    private void createRecord() {
+        colRef.orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                    recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString());
-                    previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
-                    pushRecord();
-                    Log.wtf("WRF", "record = " + recordNo + " edit previous record");
-                } else if (task.isSuccessful()) {
-                    colRef.orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                if (!task.getResult().isEmpty()) {
-                                    recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
-                                    previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
-                                    pushRecord();
-                                    Log.wtf("WRF", "record = " + recordNo + " new record");
-                                } else if (task.isSuccessful()) {
-                                    recordNo = 1;
-                                    previousUnit = 0;
-                                    pushRecord();
-                                    Log.wtf("WRF", "record = " + recordNo + " new record new collection");
-                                }
-                            }
-
-                        }
-                    });
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
+                            previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
+                        pushRecord();
+                        Log.wtf("WRF", "record = " + recordNo + " new record");
+                    } else {
+                        recordNo = 1;
+                        previousUnit = 0;
+                        pushRecord();
+                        Log.wtf("WRF", "record = " + recordNo + " new record new collection");
+                    }
+                    recordExist = false;
                 }
+
             }
         });
     }
@@ -184,11 +203,19 @@ public class WaterRecordFragment extends Fragment {
         int price;
         if (previousUnit != 0) {
             price = (unit - previousUnit) * rate;
+            Log.wtf("WRF", unit + " - " + previousUnit + " * " + rate);
         }
         else {
+            Log.wtf("WRF", "first month");
             price = 0;
         }
-        record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
+        if (previousRecordNo != 0) {
+            record = new WaterRecord(unit, year, month, room, user.getDisplayName(), previousRecordNo, price);
+            previousRecordNo = 0;
+        }
+        else {
+            record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
+        }
         mdb.collection("rooms")
                 .document("house_no " + room)
                 .collection("water_usage")
