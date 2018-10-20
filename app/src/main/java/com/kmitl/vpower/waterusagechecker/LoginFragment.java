@@ -39,14 +39,15 @@ public class LoginFragment extends Fragment{
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         userAuth = FirebaseAuth.getInstance();
         mdb = FirebaseFirestore.getInstance();
         initLoginBTN();
-        super.onActivityCreated(savedInstanceState);
+
     }
 
     void initLoginBTN() {
-        Button btn_login = getView().findViewById(R.id.login_login_btn);
+        Button btn_login = getView().findViewById(R.id.login_button);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,8 +57,8 @@ public class LoginFragment extends Fragment{
                 String userID_str = userId.getText().toString();
                 String pass_str = pass.getText().toString();
 
-                Log.d("LOGIN", "USER ID = " + userID_str);
-                Log.d("LOGIN", "PASSWORD = " + pass_str);
+                Log.wtf("LOGIN", "USER ID = " + userID_str);
+                Log.wtf("LOGIN", "PASSWORD = " + pass_str);
 
                 if (userID_str.isEmpty() || pass_str.isEmpty()) {
                     Toast.makeText(getActivity(),
@@ -68,6 +69,7 @@ public class LoginFragment extends Fragment{
                     Log.d("USER", "USER OR PASSWORD IS EMPTY");
                 }
                 else {
+                    Log.wtf("login", "not empty");
                     userAuth.signInWithEmailAndPassword(userID_str, pass_str).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
@@ -77,7 +79,7 @@ public class LoginFragment extends Fragment{
                                         .replace(R.id.main_view,new MenuFragment())
                                         .commit();
                             //}
-
+                            Log.wtf("login", "success");
                             setUserProfile();
 
                         }

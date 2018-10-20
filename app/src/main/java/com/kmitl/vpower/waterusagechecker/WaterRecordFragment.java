@@ -52,11 +52,13 @@ public class WaterRecordFragment extends Fragment {
 
     private WaterRecord record;
 
-    private String meterStr;
+    private String unitStr;
     private String room;
     private String month;
     private String year;
     private int recordNo;
+    private int rate;
+    private int previousUnit;
 
 
     @Nullable
@@ -88,6 +90,8 @@ public class WaterRecordFragment extends Fragment {
         ArrayAdapter<String> adapterRoom = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, roomList);
         roomSpinner.setAdapter(adapterRoom);
 
+        getRate();
+
 //        roomSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 //            @Override
 //            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -111,7 +115,7 @@ public class WaterRecordFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 EditText meter = getView().findViewById(R.id.water_record_meter);
-                meterStr = meter.getText().toString();
+                unitStr = meter.getText().toString();
 
                 month = monthSpinner.getSelectedItem().toString();
                 year = yearSpinner.getSelectedItem().toString();
@@ -133,24 +137,23 @@ public class WaterRecordFragment extends Fragment {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful() && !task.getResult().isEmpty()) {
                     recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString());
+                    previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
                     pushRecord();
-                    setProgressBar(false);
                     Log.wtf("WRF", "record = " + recordNo + " edit previous record");
-                }
-                else if (task.isSuccessful()) {
+                } else if (task.isSuccessful()) {
                     colRef.orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 if (!task.getResult().isEmpty()) {
                                     recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
+                                    previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
                                     pushRecord();
-                                    setProgressBar(false);
                                     Log.wtf("WRF", "record = " + recordNo + " new record");
                                 } else if (task.isSuccessful()) {
                                     recordNo = 1;
+                                    previousUnit = 0;
                                     pushRecord();
-                                    setProgressBar(false);
                                     Log.wtf("WRF", "record = " + recordNo + " new record new collection");
                                 }
                             }
@@ -162,10 +165,30 @@ public class WaterRecordFragment extends Fragment {
         });
     }
 
+    private void getRate() {
+        setProgressBar(true);
+        mdb.collection("Water Rates").orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    rate = Integer.parseInt(task.getResult().getDocuments().get(0).get("rate").toString());
+                    setProgressBar(false);
+                }
+            }
+        });
+    }
+
     private void pushRecord() {
         String monthFormat = year + "_" + month;
-
-        record = new WaterRecord(Integer.parseInt(meterStr), year, month, room, user.getDisplayName(), recordNo);
+        int unit = Integer.parseInt(unitStr);
+        int price;
+        if (previousUnit != 0) {
+            price = (unit - previousUnit) * rate;
+        }
+        else {
+            price = 0;
+        }
+        record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
         mdb.collection("rooms")
                 .document("house_no " + room)
                 .collection("water_usage")
@@ -174,6 +197,7 @@ public class WaterRecordFragment extends Fragment {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.wtf("WRF", "month " + month + " year " + year + " record no " + recordNo);
+                setProgressBar(false);
                 Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -189,8 +213,7 @@ public class WaterRecordFragment extends Fragment {
         if (on) {
             progressBar.setVisibility(View.VISIBLE);
             progressScreen.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             progressBar.setVisibility(View.GONE);
             progressScreen.setVisibility(View.GONE);
         }
