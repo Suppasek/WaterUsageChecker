@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
+        android:verticalScrollbarPosition="right"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/fragment_overall_month"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            tools:layout_editor_absoluteX="150dp"
-            tools:layout_editor_absoluteY="131dp" />
+            android:text="month" />
+        <Spinner
+            android:id="@+id/fragment_overall_date_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <!--<Spinner-->
-            <!--android:id="@+id/spinner"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content" />-->
-
-        <!--<TableLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
             <ListView
                 android:id="@+id/fragment_overall_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="573dp">
             </ListView>
+        </TableLayout>
 
-        <!--</TableLayout>-->
 
     </LinearLayout>
-
 </ScrollView>
-</android.support.constraint.ConstraintLayout>
+
+</LinearLayout>
