@@ -12,29 +12,91 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/fragment_overall_month"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="month" />
-        <Spinner
-            android:id="@+id/fragment_overall_date_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TableLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:stretchColumns="*">
+            android:layout_margin="5dp"
+            android:layout_weight="1.0">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="month"
+                android:textSize="20dp"
+                android:layout_weight="1.0"/>
+            <Spinner
+                android:id="@+id/fragment_overall_date_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="4"
+                android:layout_gravity="left">
+                <TextView
+                    android:id="@+id/col_1"
+                    android:text="Room"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#ff9a9a"/>
+                <TextView
+                    android:id="@+id/col_2"
+                    android:text="Units"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#fff9be"/>
+                <TextView
+                    android:id="@+id/col_3"
+                    android:text="Unit Price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#cdffbe"/>
+                <TextView
+                    android:id="@+id/col_4"
+                    android:text="Amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#b0fdff"/>
+            </LinearLayout>
+
             <ListView
                 android:id="@+id/fragment_overall_list"
                 android:layout_width="match_parent"
                 android:layout_height="573dp">
             </ListView>
-        </TableLayout>
 
+        </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
 
+</ScrollView>
 </LinearLayout>

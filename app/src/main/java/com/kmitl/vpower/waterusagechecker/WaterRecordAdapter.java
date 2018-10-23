@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.support.annotation.NonNull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
@@ -31,12 +29,6 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
                         @Nullable View convertView,
                         @NonNull ViewGroup parent) {
 
-//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-//        View recordItem = inflater.inflate(
-//                R.layout.fragment_overall_item,
-//                parent,
-//                false);
         View recordItem = LayoutInflater.from(context).inflate(
                 R.layout.fragment_overall_item,
                 parent,
