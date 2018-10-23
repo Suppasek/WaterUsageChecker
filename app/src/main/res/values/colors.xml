@@ -3,4 +3,11 @@
     <color name="colorPrimary">#c2e6ff</color>
     <color name="colorPrimaryDark">#c50e29</color>
     <color name="colorAccent">#ffbcaf</color>
+    <color name="cardColor">#23A3E2</color>
+    <color name="whiteColor">#FFFFFF</color>
+    <color name="buttonColor">#C2E6FF</color>
+    <color name="loginButtonColor">#24A4E5</color>
+    <color name="toolbarTitleColor">#2085BD</color>
+    <color name="cancelButtonColor">#e25049</color>
+    <color name="confirmButtonColor">#1083BA</color>
 </resources>

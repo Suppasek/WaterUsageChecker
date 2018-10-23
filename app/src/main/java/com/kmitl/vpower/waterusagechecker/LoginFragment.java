@@ -1,4 +1,6 @@
 package com.kmitl.vpower.waterusagechecker;
+import android.graphics.drawable.ColorDrawable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,8 +30,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginFragment extends Fragment{
 
-    FirebaseAuth userAuth;
-    FirebaseFirestore mdb;
+    private FirebaseAuth userAuth;
+    private FirebaseFirestore mdb;
+    private ProgressBar progressBar;
+    private FrameLayout progressScreen;
+    private ConstraintLayout entireScreen;
 
     @Nullable
     @Override
@@ -42,6 +49,11 @@ public class LoginFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
         userAuth = FirebaseAuth.getInstance();
         mdb = FirebaseFirestore.getInstance();
+
+        progressBar = getView().findViewById(R.id.login_progressBar);
+        progressScreen = getView().findViewById(R.id.login_progressBarHolder);
+        entireScreen = getView().findViewById(R.id.login_entire);
+        setProgressBar(false);
         initLoginBTN();
 
     }
@@ -51,6 +63,7 @@ public class LoginFragment extends Fragment{
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setProgressBar(true);
                 EditText userId =  getView().findViewById(R.id.login_userId);
                 EditText pass =  getView().findViewById(R.id.login_pass);
 
@@ -65,7 +78,7 @@ public class LoginFragment extends Fragment{
                             "กรุณาระบุ USER OR PASSWORD",
                             Toast.LENGTH_SHORT
                     ).show();
-
+                    setProgressBar(false);
                     Log.d("USER", "USER OR PASSWORD IS EMPTY");
                 }
                 else {
@@ -73,13 +86,6 @@ public class LoginFragment extends Fragment{
                     userAuth.signInWithEmailAndPassword(userID_str, pass_str).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            //if(userAuth.getCurrentUser().isEmailVerified()){
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.main_view,new MenuFragment())
-                                        .commit();
-                            //}
-                            Log.wtf("login", "success");
                             setUserProfile();
 
                         }
@@ -90,11 +96,12 @@ public class LoginFragment extends Fragment{
                                     "กรุณาระบุ USER OR PASSWORD ให้ถูกต้อง",
                                     Toast.LENGTH_SHORT
                             ).show();
+                            setProgressBar(false);
                         }
                     });
-
                     Log.d("USER", "INVALID USER NAME OR PASSWORD");
                 }
+
             }
         });
     }
@@ -108,9 +115,34 @@ public class LoginFragment extends Fragment{
                 User user = documentSnapshot.toObject(User.class);
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(user.getName()).build();
                 firebaseUser.updateProfile(profileUpdates);
+                if (user.getType().equals("Water Meter Reader")) {
+
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_view,new WaterRecordFragment())
+                            .commit();
+                    Log.wtf("login", "success");
+                    //setProgressBar(false);
+                }
             }
         });
 
     }
+
+    private void setProgressBar(Boolean on) {
+        if (on) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressScreen.setVisibility(View.VISIBLE);
+            entireScreen.setForeground(new ColorDrawable(0xFF000000));
+            entireScreen.setAlpha((float) 0.4);
+
+        } else {
+            progressBar.setVisibility(View.GONE);
+            progressScreen.setVisibility(View.GONE);
+            entireScreen.setForeground(null);
+            entireScreen.setAlpha((float) 1);
+        }
+    }
+
 
 }

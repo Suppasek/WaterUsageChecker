@@ -1,22 +1,28 @@
 package com.kmitl.vpower.waterusagechecker;
 
+import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,6 +34,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -41,11 +48,13 @@ public class WaterRecordFragment extends Fragment {
 
     private ProgressBar progressBar;
     private FrameLayout progressScreen;
+    private ConstraintLayout entireScreen;
+    private ImageButton logoutBtn;
 
     private FirebaseFirestore mdb = FirebaseFirestore.getInstance();
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private CollectionReference colRef;
-
+    private Dialog dialog;
     private ArrayList<String> monthList = new ArrayList<>();
     private ArrayList<String> yearList = new ArrayList<>();
     private ArrayList<String> roomList = new ArrayList<>();
@@ -65,6 +74,7 @@ public class WaterRecordFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_water_record, container, false);
     }
 
@@ -72,6 +82,9 @@ public class WaterRecordFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        Toolbar toolbar = getView().findViewById(R.id.water_record_toolbar);
+        TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText("บันทึกหน่วยค่าน้ำ");
 
         monthSpinner = getView().findViewById(R.id.water_record_month);
         yearSpinner = getView().findViewById(R.id.water_record_year);
@@ -79,6 +92,11 @@ public class WaterRecordFragment extends Fragment {
 
         progressBar = getView().findViewById(R.id.water_record_progressBar);
         progressScreen = getView().findViewById(R.id.water_record_progressBarHolder);
+        entireScreen = getView().findViewById(R.id.water_record_entire);
+
+        setDialog();
+
+        setLogoutBtn();
 
         createData();
 
@@ -117,14 +135,19 @@ public class WaterRecordFragment extends Fragment {
             public void onClick(View v) {
                 EditText meter = getView().findViewById(R.id.water_record_meter);
                 unitStr = meter.getText().toString();
-
                 month = monthSpinner.getSelectedItem().toString();
                 year = yearSpinner.getSelectedItem().toString();
+                room = roomSpinner.getSelectedItem().toString();
 
-                setProgressBar(true);
+                TextView roomText = dialog.findViewById(R.id.record_dialog_room);
+                TextView monthText = dialog.findViewById(R.id.record_dialog_month);
+                TextView unitText = dialog.findViewById(R.id.record_dialog_unit);
 
-                getPreviousRecord();
+                roomText.setText(room);
+                monthText.setText(year+"/"+month);
+                unitText.setText(unitStr+" หน่วย");
 
+                dialog.show();
 
             }
         });
@@ -136,7 +159,6 @@ public class WaterRecordFragment extends Fragment {
             createRecord();
         }
         else {
-            room = roomSpinner.getSelectedItem().toString();
             colRef = mdb.collection("rooms").document("house_no " + room).collection("water_usage");
             colRef.whereEqualTo("year", year).whereEqualTo("month", month).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -149,6 +171,7 @@ public class WaterRecordFragment extends Fragment {
                                 previousRecordNo = Integer.parseInt(task1.getResult().getDocuments().get(0).get("recordNo").toString());
                                 recordExist = true;
                                 Log.wtf("WRF", "record = " + recordNo + " delete previous record");
+
                                 getPreviousRecord();
                             }
                         });
@@ -168,7 +191,7 @@ public class WaterRecordFragment extends Fragment {
                 if (task.isSuccessful()) {
                     if (!task.getResult().isEmpty()) {
                         recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
-                            previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
+                         previousUnit = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordUnit").toString());
                         pushRecord();
                         Log.wtf("WRF", "record = " + recordNo + " new record");
                     } else {
@@ -180,6 +203,30 @@ public class WaterRecordFragment extends Fragment {
                     recordExist = false;
                 }
 
+            }
+        });
+    }
+
+    private void setDialog() {
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.record_dialog);
+
+        Button acceptButton = dialog.findViewById(R.id.record_dialog_accept);
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setProgressBar(true);
+                dialog.dismiss();
+                getPreviousRecord();
+            }
+        });
+
+        Button cancelButton = dialog.findViewById(R.id.record_dialog_decline);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
     }
@@ -233,15 +280,36 @@ public class WaterRecordFragment extends Fragment {
         }
     }
 
+    private void setLogoutBtn() {
+        final FirebaseAuth userAuth = FirebaseAuth.getInstance();
+
+        logoutBtn = getView().findViewById(R.id.toolbar_logout);
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userAuth.signOut();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_view, new LoginFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+    }
+
     private void setProgressBar(Boolean on) {
         if (on) {
             progressBar.setVisibility(View.VISIBLE);
             progressScreen.setVisibility(View.VISIBLE);
+            entireScreen.setForeground(new ColorDrawable(0xFF000000));
+            entireScreen.setAlpha((float) 0.4);
+
         } else {
             progressBar.setVisibility(View.GONE);
             progressScreen.setVisibility(View.GONE);
+            entireScreen.setForeground(null);
+            entireScreen.setAlpha((float) 1);
         }
-
     }
 
     private void createData() {
