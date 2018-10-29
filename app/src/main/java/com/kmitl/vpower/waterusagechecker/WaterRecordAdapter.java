@@ -50,4 +50,8 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
 
         return recordItem;
     }
+
+    public List<WaterRecord> getWaterRecords() {
+        return waterRecords;
+    }
 }

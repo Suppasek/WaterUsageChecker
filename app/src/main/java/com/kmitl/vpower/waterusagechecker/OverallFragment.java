@@ -27,6 +27,7 @@ public class OverallFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
     private ArrayList<String> monthList = new ArrayList<>();
     private List<WaterRecord> waterRecords;
+    private Spinner dateSpinner;
 
     public OverallFragment() {
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -49,21 +50,20 @@ public class OverallFragment extends Fragment {
     }
 
     private void createMothSpinner() {
-        Spinner dateSpinner = getView().findViewById(R.id.fragment_overall_date_spinner);
+        dateSpinner = getView().findViewById(R.id.fragment_overall_date_spinner);
         for (Integer i = 1; i < 13; i++) {
             monthList.add("2018_" + intToStr(i));
         }
-
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthList);
         dateSpinner.setAdapter(adapterMonth);
     }
 
     public void getValueDB() {
         Log.d("overall", "In getValueDB");
-        String recDate = "2018_2";
+
+        String recDate = dateSpinner.getSelectedItem().toString();
 
         ListView recordTable = (ListView) getView().findViewById(R.id.fragment_overall_list);
-
 
         final WaterRecordAdapter recordAdapter = new WaterRecordAdapter(getActivity(), R.layout.fragment_overall_item, waterRecords);
 
@@ -81,7 +81,7 @@ public class OverallFragment extends Fragment {
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task.getResult().exists()) {
                         WaterRecord record = new WaterRecord(
                       Integer.parseInt(task.getResult().get("recordUnit").toString()),
                             task.getResult().get("year").toString(),
@@ -93,9 +93,13 @@ public class OverallFragment extends Fragment {
                     );
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
+                    }else {
+                        Log.d("overall", "No Data in Database");
                     }
                     Log.d("overall3", intToStr(waterRecords.size()));
-                    Log.d("overall3", "House No. = " + waterRecords.get(0).getHouseNo());
+                    if (waterRecords.size() != 0) {
+                        Log.d("overall3", "House No. = " + waterRecords.get(0).getHouseNo());
+                    }
                 }
             });
         }
