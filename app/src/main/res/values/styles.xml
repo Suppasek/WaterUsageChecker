@@ -9,4 +9,10 @@
         <item name="android:fontFamily">@font/mitr_regular</item>
     </style>
 
+    <style name="spinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+
 </resources>

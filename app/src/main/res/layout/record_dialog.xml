@@ -15,6 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="หมายเลขห้อง"
+        android:textColor="@color/toolbarTitleColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -37,6 +38,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="ปี/เดือน"
+        android:textColor="@color/toolbarTitleColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -59,6 +61,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="เลขมิเตอร์น้ำ"
+        android:textColor="@color/toolbarTitleColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -90,6 +93,7 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#eb4533"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -109,7 +113,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="ยกเลิก"
-        android:background="@color/cancelButtonColor"
+        android:background="@drawable/cancel_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
