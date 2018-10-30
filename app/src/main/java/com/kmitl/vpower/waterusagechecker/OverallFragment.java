@@ -63,7 +63,8 @@ public class OverallFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String recDate = dateSpinner.getSelectedItem().toString();
-                CsvFileWriter.writeCsvFile(recDate, waterRecords);
+                Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
+                CsvFileWriter.writeCsvFile(recDate, waterRecords, getContext());
             }
         });
     }
