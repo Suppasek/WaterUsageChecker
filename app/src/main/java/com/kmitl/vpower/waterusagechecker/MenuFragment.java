@@ -39,6 +39,7 @@ public class MenuFragment extends Fragment {
         menu = new ArrayList<>();
 
         menu.add("Record");
+        menu.add("Overall");
         menu.add("Sign Out");
 
         final ArrayAdapter<String> menuAdapter = new ArrayAdapter<String>(
@@ -62,6 +63,15 @@ public class MenuFragment extends Fragment {
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.main_view, new WaterRecordFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+
+                else if(menu.get(i).equals("Overall")){
+
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_view, new OverallFragment())
                             .addToBackStack(null)
                             .commit();
                 }
