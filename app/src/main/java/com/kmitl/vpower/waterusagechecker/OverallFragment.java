@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,7 +20,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class OverallFragment extends Fragment {
@@ -47,12 +52,43 @@ public class OverallFragment extends Fragment {
         Log.d("overall", "In onActivityCreated");
         createMothSpinner();
         getValueDB();
+        initShowBtn();
+        initCSVBtn();
+    }
+
+    private void initCSVBtn() {
+        Button btnCSV = getView().findViewById(R.id.fragment_overall_csv_btn);
+
+        btnCSV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String recDate = dateSpinner.getSelectedItem().toString();
+                CsvFileWriter.writeCsvFile(recDate, waterRecords);
+            }
+        });
+    }
+
+    private void initShowBtn() {
+        Button btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
+
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getValueDB();
+            }
+        });
     }
 
     private void createMothSpinner() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM");
+        String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("_");
+        int currentYear = Integer.parseInt(currentYearMonth[0]);
+        int currentMonth = Integer.parseInt(currentYearMonth[1]);
         dateSpinner = getView().findViewById(R.id.fragment_overall_date_spinner);
-        for (Integer i = 1; i < 13; i++) {
-            monthList.add("2018_" + intToStr(i));
+        for (Integer y = currentYear; y > 2017 ; y--) {
+            for (Integer m = currentMonth; m > 0; m--) {
+                monthList.add(intToStr(y) + "_" + intToStr(m));
+            }
         }
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthList);
         dateSpinner.setAdapter(adapterMonth);
@@ -70,7 +106,7 @@ public class OverallFragment extends Fragment {
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
 
-        for (int i = 1; i < 4; i++ ) {
+        for (int i = 1; i < 41; i++ ) {
             Log.d("overall", "Before Loop " + intToStr(i));
 
             firebaseFirestore

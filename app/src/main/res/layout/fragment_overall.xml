@@ -19,20 +19,22 @@
             android:layout_gravity="center"
             android:layout_margin="1dp"
             android:weightSum="3">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="month"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:background="#c9dbda"/>
             <Spinner
                 android:id="@+id/fragment_overall_date_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
-            <TextView
+            <Button
+                android:id="@+id/fragment_overall_show_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Show"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:background="#c9dbda"/>
+            <Button
+                android:id="@+id/fragment_overall_csv_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
