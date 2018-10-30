@@ -34,6 +34,7 @@ public class OverallFragment extends Fragment {
     private List<WaterRecord> waterRecords;
     private Spinner dateSpinner;
 
+    //merge complete
     public OverallFragment() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.firebaseFirestore = FirebaseFirestore.getInstance();
