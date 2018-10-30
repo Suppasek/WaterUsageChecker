@@ -116,13 +116,19 @@ public class LoginFragment extends Fragment{
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(user.getName()).build();
                 firebaseUser.updateProfile(profileUpdates);
                 if (user.getType().equals("Water Meter Reader")) {
-
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.main_view,new WaterRecordFragment())
                             .commit();
-                    Log.wtf("login", "success");
+                    Log.wtf("login", "water meter reader login");
                     //setProgressBar(false);
+                }
+                if (user.getType().equals("Juristic Person")) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_view,new OverallFragment())
+                            .commit();
+                    Log.wtf("login", "jurastic person login");
                 }
             }
         });

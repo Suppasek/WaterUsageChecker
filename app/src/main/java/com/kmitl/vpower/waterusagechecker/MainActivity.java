@@ -45,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
                                     .replace(R.id.main_view, new WaterRecordFragment())
                                     .commit();
                         }
+                        else if (FSuser.getType().equals("Juristic Person")) {
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.main_view, new OverallFragment())
+                                    .commit();
+                        }
                     }
                 });
             }
