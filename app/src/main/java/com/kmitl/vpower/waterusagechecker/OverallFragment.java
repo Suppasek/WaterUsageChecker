@@ -1,5 +1,8 @@
 package com.kmitl.vpower.waterusagechecker;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,9 +45,27 @@ public class OverallFragment extends Fragment {
         this.waterRecords = new ArrayList<WaterRecord>();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1000:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getContext(), "Permssion granted!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Permssion not granted!", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
+        }
+
         return inflater.inflate(R.layout.fragment_overall, container, false);
     }
 
@@ -65,7 +87,7 @@ public class OverallFragment extends Fragment {
             public void onClick(View v) {
                 String recDate = dateSpinner.getSelectedItem().toString();
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
-                CsvFileWriter.writeCsvFile(recDate, waterRecords, getContext());
+                CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
             }
         });
     }
