@@ -138,7 +138,7 @@ public class OverallFragment extends Fragment {
                     Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
                     CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
                     Toast.makeText(getActivity(),
-                            "CSV file was be downloaded.",
+                            "Success",
                             Toast.LENGTH_SHORT
                     ).show();
                 } else {
