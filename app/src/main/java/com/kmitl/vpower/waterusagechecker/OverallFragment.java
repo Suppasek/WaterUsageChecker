@@ -80,27 +80,25 @@ public class OverallFragment extends Fragment {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
         }
 
-        return inflater.inflate(R.layout.fragment_overall_new, container, false);
+        return inflater.inflate(R.layout.fragment_overall, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d("overall", "In onActivityCreated");
-        setToolbarTitle();
-        setLogoutBtn();
-        setDialog();
+//        setToolbarTitle();
+//        setLogoutBtn();
+//        setDialog();
         createMothSpinner();
 //        initBackBtn();
-//        initShowBtn();
-//        initCSVBtn();
+        initShowBtn();
+        initCSVBtn();
     }
 
     private void setToolbarTitle() {
         TextView toolbarTitle = getView().findViewById(R.id.toolbar_title);
         toolbarTitle.setText("สถิติการใช้น้ำ");
-//        ImageView waterLogo = getView().findViewById(R.id.toolbar_water_logo);
-//        waterLogo.setImageResource(R.drawable.water_logo);
     }
 
     private void setLogoutBtn() {
@@ -129,8 +127,8 @@ public class OverallFragment extends Fragment {
     }
 
     private void initCSVBtn() {
+//        ImageView CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
         Button CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
-
         CSVbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,8 +154,8 @@ public class OverallFragment extends Fragment {
     }
 
     private void initShowBtn() {
+//        ImageView btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
         Button btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
-
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,32 +192,6 @@ public class OverallFragment extends Fragment {
         waterRecords.clear();
         checkData = 0;
 
-//        DataLoopThread dataLoop = new DataLoopThread(firebaseFirestore, recordAdapter, waterRecords, recDate);
-//        dataLoop.start();
-
-//        synchronized (dataLoop) {
-//            try {
-//                Log.d("overall", "Waiting for dataLoop to complete...");
-//                dataLoop.wait();
-//                checkData = dataLoop.getCheckData();
-//            } catch (InterruptedException e) {
-//                Log.d("overall", "Error in Thread!!");
-//                e.printStackTrace();
-//            }
-//            if (dataLoop.getCheckData() > 0 && !dataLoop.isAlive()) {
-//                Toast.makeText(getActivity(),
-//                        "Success " + intToStr(checkData) + " " + intToStr(0),
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            } else if (dataLoop.getCheckData() == 0 && !dataLoop.isAlive()) {
-//                Toast.makeText(getActivity(),
-//                        "No Data " + intToStr(checkData) + " " + intToStr(0),
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            }
-//
-//        }
-
         for (int i = 1; i < 41; i++ ) {
             Log.d("overall", "Before Loop " + intToStr(i));
             final int hN = i;
@@ -245,23 +217,24 @@ public class OverallFragment extends Fragment {
                     );
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
+                        Log.d("overall", "Have data from House No." + intToStr(hN));
                     }else {
                         Log.d("overall", "No Data for House No." + intToStr(hN));
                     }
 
                 }
             });
-            if (checkData > 0) {
-                Toast.makeText(getActivity(),
-                        "No data.",
-                        Toast.LENGTH_SHORT
-                ).show();
-            } else if (checkData == 0) {
-                Toast.makeText(getActivity(),
-                        "Success " + intToStr(checkData) + " " + intToStr(0),
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
+//            if (checkData > 0) {
+//                Toast.makeText(getActivity(),
+//                        "No data.",
+//                        Toast.LENGTH_SHORT
+//                ).show();
+//            } else if (checkData == 0) {
+//                Toast.makeText(getActivity(),
+//                        "Success " + intToStr(checkData) + " " + intToStr(0),
+//                        Toast.LENGTH_SHORT
+//                ).show();
+//            }
         }
         Log.d("overall", "End getValueDB");
     }
