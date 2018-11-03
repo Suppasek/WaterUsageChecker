@@ -1,6 +1,7 @@
 package com.kmitl.vpower.waterusagechecker;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,8 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class OverallFragment extends Fragment {
 
@@ -37,6 +42,15 @@ public class OverallFragment extends Fragment {
     private ArrayList<String> monthList = new ArrayList<>();
     private List<WaterRecord> waterRecords;
     private Spinner dateSpinner;
+    private int checkData;
+
+    private Dialog dialog;
+    private Dialog errorDialog;
+    private Dialog verifyDialog;
+    private Dialog logoutDialog;
+    private TextView errorText;
+
+    private ImageButton logoutBtn;
 
     //merge complete
     public OverallFragment() {
@@ -66,28 +80,77 @@ public class OverallFragment extends Fragment {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
         }
 
-        return inflater.inflate(R.layout.fragment_overall, container, false);
+        return inflater.inflate(R.layout.fragment_overall_new, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d("overall", "In onActivityCreated");
+        setToolbarTitle();
+        setLogoutBtn();
+        setDialog();
         createMothSpinner();
-        getValueDB();
-        initShowBtn();
-        initCSVBtn();
+//        initBackBtn();
+//        initShowBtn();
+//        initCSVBtn();
+    }
+
+    private void setToolbarTitle() {
+        TextView toolbarTitle = getView().findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("สถิติการใช้น้ำ");
+//        ImageView waterLogo = getView().findViewById(R.id.toolbar_water_logo);
+//        waterLogo.setImageResource(R.drawable.water_logo);
+    }
+
+    private void setLogoutBtn() {
+        logoutBtn = getView().findViewById(R.id.toolbar_logout);
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutDialog.show();
+            }
+        });
+    }
+
+    private void initBackBtn() {
+        Button Backbtn = getView().findViewById(R.id.fragment_overall_back_btn);
+
+        Backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_view, new MenuFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     private void initCSVBtn() {
-        Button btnCSV = getView().findViewById(R.id.fragment_overall_csv_btn);
+        Button CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
 
-        btnCSV.setOnClickListener(new View.OnClickListener() {
+        CSVbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String recDate = dateSpinner.getSelectedItem().toString();
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
-                CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
+                if (checkData > 0) {
+                    Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
+                    CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
+                    Toast.makeText(getActivity(),
+                            "CSV file was be downloaded.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    Log.d("CSV", "There are no data for CSV");
+                    Toast.makeText(getActivity(),
+                            "There are no data for this month.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+
             }
         });
     }
@@ -129,9 +192,37 @@ public class OverallFragment extends Fragment {
 
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
+        checkData = 0;
+
+//        DataLoopThread dataLoop = new DataLoopThread(firebaseFirestore, recordAdapter, waterRecords, recDate);
+//        dataLoop.start();
+
+//        synchronized (dataLoop) {
+//            try {
+//                Log.d("overall", "Waiting for dataLoop to complete...");
+//                dataLoop.wait();
+//                checkData = dataLoop.getCheckData();
+//            } catch (InterruptedException e) {
+//                Log.d("overall", "Error in Thread!!");
+//                e.printStackTrace();
+//            }
+//            if (dataLoop.getCheckData() > 0 && !dataLoop.isAlive()) {
+//                Toast.makeText(getActivity(),
+//                        "Success " + intToStr(checkData) + " " + intToStr(0),
+//                        Toast.LENGTH_SHORT
+//                ).show();
+//            } else if (dataLoop.getCheckData() == 0 && !dataLoop.isAlive()) {
+//                Toast.makeText(getActivity(),
+//                        "No Data " + intToStr(checkData) + " " + intToStr(0),
+//                        Toast.LENGTH_SHORT
+//                ).show();
+//            }
+//
+//        }
 
         for (int i = 1; i < 41; i++ ) {
             Log.d("overall", "Before Loop " + intToStr(i));
+            final int hN = i;
 
             firebaseFirestore
                     .collection("rooms")
@@ -142,6 +233,7 @@ public class OverallFragment extends Fragment {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult().exists()) {
+                        checkData++;
                         WaterRecord record = new WaterRecord(
                       Integer.parseInt(task.getResult().get("recordUnit").toString()),
                             task.getResult().get("year").toString(),
@@ -154,21 +246,55 @@ public class OverallFragment extends Fragment {
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
                     }else {
-                        Log.d("overall", "No Data in Database");
+                        Log.d("overall", "No Data for House No." + intToStr(hN));
                     }
-                    Log.d("overall3", intToStr(waterRecords.size()));
-                    if (waterRecords.size() != 0) {
-                        Log.d("overall3", "House No. = " + waterRecords.get(0).getHouseNo());
-                    }
+
                 }
             });
+            if (checkData > 0) {
+                Toast.makeText(getActivity(),
+                        "No data.",
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else if (checkData == 0) {
+                Toast.makeText(getActivity(),
+                        "Success " + intToStr(checkData) + " " + intToStr(0),
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         }
-
         Log.d("overall", "End getValueDB");
     }
 
-    public void getRecordFromHouses(final String houseNo, final String recDate, final WaterRecordAdapter recordAdapter) {
-        Log.d("overall", "In getRecordFromHouse\nhouseNo = " + houseNo + " recDate = " + recDate);
+    private void setDialog() {
+        logoutDialog = new Dialog(getActivity());
+        logoutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        logoutDialog.setContentView(R.layout.logout_dialog);
+        logoutDialog.getWindow().setLayout(getResources().getDisplayMetrics().widthPixels, getResources().getDisplayMetrics().heightPixels /2);
+
+
+        Button logoutButton = logoutDialog.findViewById(R.id.logout_dialog_accept);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                logoutDialog.dismiss();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_view, new LoginFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        Button cancelButton3 = logoutDialog.findViewById(R.id.logout_dialog_cancel);
+        cancelButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutDialog.dismiss();
+            }
+        });
+
     }
 
     public String intToStr(int number) {

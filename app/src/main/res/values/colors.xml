@@ -12,4 +12,7 @@
     <color name="confirmButtonColor">#1083BA</color>
     <color name="errorBorder">#fb665b</color>
     <color name="acceptColor">#ad0e0e</color>
+    <color name="tableHeader">#1F84BD</color>
+    <color name="labelTable">#4BB5F0</color>
+    <color name="primaryCol">#D0E5F1</color>
 </resources>

@@ -10,41 +10,38 @@
     <TextView
         android:id="@+id/fragment_overall_row_room"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="35dp"
-        android:textSize="25dp"
-        android:layout_gravity="left"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#fff4f4"/>
+        android:text="Room"
+        android:textSize="17dp"
+        android:textAlignment="center"
+        android:background="@color/primaryCol"/>
 
     <TextView
         android:id="@+id/fragment_overall_row_units"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:textSize="25dp"
-        android:layout_gravity="left"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#fffef8"/>
+        android:text="Units"
+        android:textSize="17dp"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/fragment_overall_row_unit_price"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:textSize="25dp"
-        android:layout_gravity="left"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#fafff8"/>
+        android:text="Unit Price"
+        android:textSize="17dp"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/fragment_overall_row_amount"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:textSize="25dp"
-        android:layout_gravity="left"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#f7feff"/>
+        android:text="Amount"
+        android:textSize="17dp"
+        android:textAlignment="center" />
 
 </LinearLayout>
