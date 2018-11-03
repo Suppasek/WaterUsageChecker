@@ -113,7 +113,7 @@
             <ListView
                 android:id="@+id/fragment_overall_list"
                 android:layout_width="match_parent"
-                android:layout_height="573dp">
+                android:layout_height="wrap_content">
             </ListView>
 
         </LinearLayout>

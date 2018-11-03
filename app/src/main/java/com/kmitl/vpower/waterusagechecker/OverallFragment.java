@@ -80,16 +80,16 @@ public class OverallFragment extends Fragment {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
         }
 
-        return inflater.inflate(R.layout.fragment_overall, container, false);
+        return inflater.inflate(R.layout.fragment_overall_new, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d("overall", "In onActivityCreated");
-//        setToolbarTitle();
-//        setLogoutBtn();
-//        setDialog();
+        setToolbarTitle();
+        setLogoutBtn();
+        setDialog();
         createMothSpinner();
 //        initBackBtn();
         initShowBtn();
@@ -127,8 +127,8 @@ public class OverallFragment extends Fragment {
     }
 
     private void initCSVBtn() {
-//        ImageView CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
-        Button CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
+        ImageView CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
+
         CSVbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,8 +154,8 @@ public class OverallFragment extends Fragment {
     }
 
     private void initShowBtn() {
-//        ImageView btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
-        Button btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
+        ImageView btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
+
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +217,7 @@ public class OverallFragment extends Fragment {
                     );
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
-                        Log.d("overall", "Have data from House No." + intToStr(hN));
+                        Log.d("overall", "There data from House No." + record.getHouseNo());
                     }else {
                         Log.d("overall", "No Data for House No." + intToStr(hN));
                     }

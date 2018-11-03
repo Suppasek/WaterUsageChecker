@@ -3,44 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="2dp"
     android:weightSum="4"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:id="@+id/fragment_overall_row_room"
-        android:layout_width="match_parent"
+        android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Room"
         android:textSize="17dp"
         android:textAlignment="center"
         android:background="@color/primaryCol"/>
 
     <TextView
         android:id="@+id/fragment_overall_row_units"
-        android:layout_width="match_parent"
+        android:layout_width="35dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Units"
         android:textSize="17dp"
         android:textAlignment="center" />
 
     <TextView
         android:id="@+id/fragment_overall_row_unit_price"
-        android:layout_width="match_parent"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Unit Price"
         android:textSize="17dp"
         android:textAlignment="center" />
 
     <TextView
         android:id="@+id/fragment_overall_row_amount"
-        android:layout_width="match_parent"
+        android:layout_width="45dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Amount"
         android:textSize="17dp"
         android:textAlignment="center" />
 

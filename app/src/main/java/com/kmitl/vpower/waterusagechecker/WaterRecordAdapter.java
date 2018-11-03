@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
     private List<WaterRecord> waterRecords;
@@ -40,7 +43,9 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
         TextView amountText = (TextView) recordItem.findViewById(R.id.fragment_overall_row_amount);
 
         WaterRecord record = waterRecords.get(position);
-        String totalPrice = Integer.toString(record.getRecordUnit() * record.getPrice());
+        String totalPrice = NumberFormat.getNumberInstance(Locale.US).format(record.getRecordUnit() * record.getPrice());
+
+
 
         Log.d("adapter", "setThreeColumnINaRow");
         roomText.setText(record.getHouseNo());
