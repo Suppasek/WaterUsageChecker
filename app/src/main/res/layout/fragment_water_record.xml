@@ -5,103 +5,271 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/month"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="month" />
-
-    <Spinner
-        android:id="@+id/water_record_month"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+    <include
+        android:id="@+id/water_record_toolbar"
+        layout="@layout/toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/month">
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </Spinner>
-
-    <TextView
-        android:id="@+id/year"
+    <FrameLayout
+        android:id="@+id/water_record_progressBarHolder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="year"
-        app:layout_constraintStart_toEndOf="@+id/water_record_month"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_month" />
+        android:layout_height="match_parent"
+        android:alpha="0.6"
+        android:background="@android:color/black"
+        android:clickable="true"
+        android:visibility="gone">
 
-    <Spinner
-        android:id="@+id/water_record_year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/year"
-        app:layout_constraintTop_toBottomOf="@+id/year">
+        <ProgressBar
+            android:id="@+id/water_record_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
-    </Spinner>
-
-    <TextView
-        android:id="@+id/room"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/water_record_entire"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="room"
-        app:layout_constraintStart_toEndOf="@+id/water_record_year"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_year" />
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/water_record_toolbar">
 
-    <Spinner
-        android:id="@+id/water_record_room"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/room"
-        app:layout_constraintTop_toBottomOf="@+id/room">
 
-    </Spinner>
+        <android.support.v7.widget.CardView
+            android:id="@+id/water_record_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/cardColor"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.39">
 
-    <EditText
-        android:id="@+id/water_record_meter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
-        android:hint="meter"
-        app:layout_constraintStart_toStartOf="@+id/room"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_room" />
-
-    <Button
-        android:id="@+id/water_record_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="add"
-        app:layout_constraintStart_toStartOf="@+id/water_record_meter"
-        app:layout_constraintTop_toBottomOf="@+id/water_record_meter" />
-
-            <FrameLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/water_record_progressBarHolder"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:alpha="0.4"
-                android:background="@android:color/black"
-                android:clickable="true"
-                android:visibility="gone">
+                android:layout_margin="8dp"
+                android:background="@color/cardColor">
 
-                <ProgressBar
-                    android:id="@+id/water_record_progressBar"
+
+                <TextView
+                    android:id="@+id/water_record_roomtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="หมายเลขห้อง"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RelativeLayout
+                    android:id="@+id/spinner_bg1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:indeterminate="true"
-                    android:layout_gravity="center"
-                    android:visibility="gone"/>
-            </FrameLayout>
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/save_button"
+                    android:padding="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/water_record_roomtext"
+                    app:layout_constraintVertical_bias="0.0">
+
+
+                    <Spinner
+                        android:id="@+id/water_record_room"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0dp"
+                        android:padding="0dp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/water_record_yeartext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="ปี"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="22dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_bg1" />
+
+                <RelativeLayout
+                    android:id="@+id/spinner_bg2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/save_button"
+                    android:padding="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/water_record_yeartext"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <Spinner
+                        android:id="@+id/water_record_year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/water_record_monthtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:text="เดือน"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="22dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.531"
+                    app:layout_constraintStart_toEndOf="@+id/water_record_yeartext"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_bg1" />
+
+                <RelativeLayout
+                    android:id="@+id/spinner_bg3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/save_button"
+                    android:padding="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/spinner_bg2"
+                    app:layout_constraintTop_toBottomOf="@+id/water_record_monthtext"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <Spinner
+                        android:id="@+id/water_record_month"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/water_record_metertext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="เลขมิเตอร์น้ำ"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_bg2" />
+
+                <EditText
+                    android:id="@+id/water_record_meter"
+                    android:layout_width="65dp"
+                    android:layout_height="47dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/save_button"
+
+                    android:cursorVisible="true"
+                    android:inputType="number"
+                    android:textAlignment="center"
+
+                    android:textCursorDrawable="@null"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/water_record_metertext" />
+
+
+                <!--<TextView-->
+                <!--android:id="@+id/room"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:text="room"-->
+                <!--app:layout_constraintStart_toEndOf="@+id/water_record_year"-->
+                <!--app:layout_constraintTop_toBottomOf="@+id/water_record_year" />-->
+
+                <!--<Button-->
+                <!--android:id="@+id/water_record_add"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:text="add"-->
+                <!--app:layout_constraintStart_toStartOf="@+id/water_record_meter"-->
+                <!--app:layout_constraintTop_toBottomOf="@+id/water_record_meter" />-->
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <Button
+            android:id="@+id/water_record_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/save_button"
+            android:text="บันทึก"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="@+id/water_record_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/water_record_card" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="74dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/water_record_add"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@drawable/wave" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>

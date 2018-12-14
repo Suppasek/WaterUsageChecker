@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:verticalScrollbarPosition="right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="1dp"
+            android:weightSum="4">
+            <Button
+                android:id="@+id/fragment_overall_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Back"
+                android:textAlignment="center"
+                android:textSize="15dp"
+                android:background="#ffbf5b"/>
+            <Spinner
+                android:id="@+id/fragment_overall_date_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/fragment_overall_show_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Show"
+                android:textAlignment="center"
+                android:textSize="15dp"
+                android:background="#c9dbda"/>
+            <Button
+                android:id="@+id/fragment_overall_csv_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Export"
+                android:textAlignment="center"
+                android:textSize="15dp"
+                android:background="#c9abdb"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="4"
+                android:layout_gravity="left">
+                <TextView
+                    android:id="@+id/col_1"
+                    android:text="Room"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#ff9a9a"/>
+                <TextView
+                    android:id="@+id/col_2"
+                    android:text="Units"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#fff9be"/>
+                <TextView
+                    android:id="@+id/col_3"
+                    android:text="Unit Price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#cdffbe"/>
+                <TextView
+                    android:id="@+id/col_4"
+                    android:text="Amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    android:textSize="15dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="#b0fdff"/>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/fragment_overall_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+</LinearLayout>

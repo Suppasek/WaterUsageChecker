@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#c2e6ff</color>
-    <color name="colorPrimaryDark">#c50e29</color>
-    <color name="colorAccent">#ffbcaf</color>
+    <color name="colorPrimaryDark">#0384BD</color>
+    <color name="colorAccent">#C2E6FF</color>
+    <color name="cardColor">#23A3E2</color>
+    <color name="whiteColor">#FFFFFF</color>
+    <color name="buttonColor">#C2E6FF</color>
+    <color name="loginButtonColor">#24A4E5</color>
+    <color name="toolbarTitleColor">#2085BD</color>
+    <color name="cancelButtonColor">#e25049</color>
+    <color name="confirmButtonColor">#1083BA</color>
+    <color name="errorBorder">#fb665b</color>
+    <color name="acceptColor">#ad0e0e</color>
+    <color name="tableHeader">#1F84BD</color>
+    <color name="labelTable">#4BB5F0</color>
+    <color name="primaryCol">#D0E5F1</color>
 </resources>
