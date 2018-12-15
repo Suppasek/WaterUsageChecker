@@ -128,7 +128,18 @@ public class LoginFragment extends Fragment{
                             .beginTransaction()
                             .replace(R.id.main_view,new OverallFragment())
                             .commit();
-                    Log.wtf("login", "jurastic person login");
+                    Log.wtf("login", "juristic person login");
+                }
+                if (user.getType().equals("Resident")) {
+                    Fragment waterBill = new WaterBillRecordFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("room", user.getRoom());
+                    waterBill.setArguments(bundle);
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_view, waterBill)
+                            .commit();
+                    Log.wtf("login", "resident login");
                 }
             }
         });
