@@ -92,4 +92,8 @@ public class WaterRecord {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public int compareTo(WaterRecord waterRecord) {
+        return this.houseNo.compareTo(waterRecord.houseNo);
+    }
 }
