@@ -4,6 +4,7 @@ public class User {
 
     private String name;
     private String type;
+    private String room;
 
     public User() {
 
@@ -28,5 +29,13 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 }

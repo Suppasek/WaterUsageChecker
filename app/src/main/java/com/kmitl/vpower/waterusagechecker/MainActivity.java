@@ -1,5 +1,6 @@
 package com.kmitl.vpower.waterusagechecker;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +8,6 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,6 +50,18 @@ public class MainActivity extends AppCompatActivity {
                                     .beginTransaction()
                                     .replace(R.id.main_view, new OverallFragment())
                                     .commit();
+                        }
+                        else if (FSuser.getType().equals("Resident")) {
+                            Fragment waterBill = new WaterBillRecordFragment();
+                            Bundle bundle = new Bundle();
+
+                            bundle.putString("room",FSuser.getRoom());
+                            waterBill.setArguments(bundle);
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.main_view, waterBill)
+                                    .commit();
+                            Log.wtf("login", "resident login");
                         }
                     }
                 });

@@ -50,8 +50,8 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
         Log.d("adapter", "setThreeColumnINaRow");
         roomText.setText(record.getHouseNo());
         unitsText.setText(Integer.toString(record.getRecordUnit()));
-        unitPriceText.setText(Integer.toString(record.getPrice()));
-        amountText.setText(totalPrice);
+        unitPriceText.setText(Integer.toString(18));
+        amountText.setText(Integer.toString(record.getPrice()));
 
         return recordItem;
     }
