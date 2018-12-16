@@ -2,19 +2,23 @@ package com.kmitl.vpower.waterusagechecker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -46,7 +50,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class OverallFragment extends Fragment {
@@ -111,9 +117,10 @@ public class OverallFragment extends Fragment {
         setToolbarTitle();
         setLogoutBtn();
         setDialog();
-        createMothSpinner();
+        createMonthSpinner();
+        setOnYearSelected();
 //        initBackBtn();
-        initShowBtn();
+        initChangeRateBtn();
         initCSVBtn();
     }
 
@@ -191,18 +198,44 @@ public class OverallFragment extends Fragment {
         });
     }
 
-    private void initShowBtn() {
-        ImageView btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
+    private void initChangeRateBtn() {
+        ImageView btnShow = getView().findViewById(R.id.fragment_overall_change_rate_btn);
 
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getValueDB();
+                final AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getContext());
+                LayoutInflater inflater = getLayoutInflater();
+
+                View view = inflater.inflate(R.layout.change_rate_dialog, null);
+                builder.setView(view);
+
+                final TextView dialogMessage = (TextView) view.findViewById(R.id.change_rate_dialog_message);
+                final EditText waterRate = (EditText) view.findViewById(R.id.change_rate_water_rate);
+
+                dialogMessage.setText("กรุณาใส่อัตราค่าน้ำที่ต้องการ");
+
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String waterRateStr = waterRate.getText().toString();
+                        setRate(waterRateStr);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.show();
             }
         });
     }
 
-    private void createMothSpinner() {
+    private void createMonthSpinner() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM");
         String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("_");
         int currentYear = Integer.parseInt(currentYearMonth[0]);
@@ -217,10 +250,8 @@ public class OverallFragment extends Fragment {
         dateSpinner.setAdapter(adapterMonth);
     }
 
-    public void getValueDB() {
-        Log.d("overall", "In getValueDB");
-
-        String recDate = dateSpinner.getSelectedItem().toString();
+    public void getValueDB(String recDate) {
+        Log.d("overall", "In getValueDB\nrecDate = " + recDate);
 
         ListView recordTable = (ListView) getView().findViewById(R.id.fragment_overall_list);
 
@@ -257,20 +288,21 @@ public class OverallFragment extends Fragment {
                     }else {
                         Log.d("overall", "No Data for House No." + intToStr(hN));
                     }
-
+                    if (hN == 40) {
+                        if (checkData == 0) {
+                            Toast.makeText(getActivity(),
+                                    "No Data",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        } else if (checkData > 0) {
+                            Toast.makeText(getActivity(),
+                                    "Success",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    }
                 }
             });
-//            if (checkData > 0) {
-//                Toast.makeText(getActivity(),
-//                        "No data.",
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            } else if (checkData == 0) {
-//                Toast.makeText(getActivity(),
-//                        "Success " + intToStr(checkData) + " " + intToStr(0),
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            }
         }
 
         Log.d("overall", "End getValueDB");
@@ -305,6 +337,55 @@ public class OverallFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setOnYearSelected() {
+        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getValueDB(monthList.get(position));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void setRate(final String newRate) {
+        firebaseFirestore.collection("Water Rates").orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+//                    Integer rate = Integer.parseInt(task.getResult().getDocuments().get(0).get("rate").toString());
+                    Integer recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
+                    String newRecordNo = recordNo.toString();
+
+                    Map<String, Object> record = new HashMap<>();
+                    record.put("rate", newRate);
+                    record.put("recordNo", newRecordNo);
+
+                    firebaseFirestore.collection("Water Rates").document("record " + newRecordNo).set(record)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(getActivity(),
+                                            "New water rate was saved",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(),
+                                    "Failed to save new water rate",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public String intToStr(int number) {

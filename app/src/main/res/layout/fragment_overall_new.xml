@@ -43,13 +43,13 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/fragment_overall_show_btn"
-                android:layout_width="99dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_show_btn" />
+            <!--<ImageView-->
+                <!--android:id="@+id/fragment_overall_show_btn"-->
+                <!--android:layout_width="99dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--app:srcCompat="@drawable/ic_show_btn" />-->
 
 
         </LinearLayout>
@@ -60,15 +60,23 @@
             android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView22"
+            <!--<TextView-->
+                <!--android:id="@+id/textView22"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="ดาวน์โหลดไฟล์ (csv)"-->
+                <!--android:textAlignment="center"-->
+                <!--android:textSize="17dp" />-->
+
+            <ImageView
+                android:id="@+id/fragment_overall_change_rate_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="ดาวน์โหลดไฟล์ (csv)"
-                android:textAlignment="center"
-                android:textSize="17dp" />
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_show_btn" />
 
             <ImageView
                 android:id="@+id/fragment_overall_csv_btn"
