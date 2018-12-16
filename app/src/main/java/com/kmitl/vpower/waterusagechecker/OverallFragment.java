@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,7 +33,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,11 +66,18 @@ public class OverallFragment extends Fragment {
 
     private ImageButton logoutBtn;
 
+    private StorageReference storageRef;
+    private StorageReference imageRef;
+    private UploadTask mUploadTask;
+    private FirebaseStorage firebaseStorage;
+
     //merge complete
     public OverallFragment() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.waterRecords = new ArrayList<WaterRecord>();
+        this.firebaseStorage = FirebaseStorage.getInstance();
+        this.storageRef = firebaseStorage.getReference();
     }
 
     @Override
@@ -142,19 +157,36 @@ public class OverallFragment extends Fragment {
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
                 if (checkData > 0) {
                     Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
-                    CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
-                    Toast.makeText(getActivity(),
-                            "Success",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else {
-                    Log.d("CSV", "There are no data for CSV");
-                    Toast.makeText(getActivity(),
-                            "There are no data for this month.",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    File csvFile = CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
+                    uploadFromStream(csvFile);
                 }
+            }
+        });
+    }
 
+    private void uploadFromStream(File file) {
+//        Helper.showDialog(this);
+        InputStream stream = null;
+        try {
+            stream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        imageRef = storageRef.child("reports/" + file.getName());
+        mUploadTask = imageRef.putStream(stream);
+        mUploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+//                Helper.dismissDialog();
+//                mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+                Log.d("CSV", exception.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                Helper.dismissDialog();
+//                mTextView.setText(taskSnapshot.getDownloadUrl().toString());
+                Log.d("CSV", "Success URL = " + taskSnapshot.getDownloadUrl().toString());
             }
         });
     }
@@ -194,12 +226,6 @@ public class OverallFragment extends Fragment {
 
         final WaterRecordAdapter recordAdapter = new WaterRecordAdapter(getActivity(), R.layout.fragment_overall_item, waterRecords);
 
-//        recordAdapter.sort(new Comparator<WaterRecord>() {
-//            @Override
-//            public int compare(WaterRecord o1, WaterRecord o2) {
-//                return o1.compareTo(o2);
-//            }
-//        });
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
         checkData = 0;
