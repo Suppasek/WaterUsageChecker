@@ -8,6 +8,7 @@ public class WaterRecord {
     private int recordNo;
     private int recordUnit;
     private int price;
+    private int totalUnit;
     private String recordDate;
     private String year;
     private String month;
@@ -16,6 +17,18 @@ public class WaterRecord {
 
     public WaterRecord() {
 
+    }
+
+    public WaterRecord(int recordUnit, String year, String month, String houseNo, String signature, int recordNo, int price, int totalUnit) {
+        setRecordUnit(recordUnit);
+        setRecordDate(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Calendar.getInstance().getTime()));
+        setYear(year);
+        setMonth(month);
+        setSignature(signature);
+        setHouseNo(houseNo);
+        setRecordNo(recordNo);
+        setPrice(price);
+        setTotalUnit(totalUnit);
     }
 
     public WaterRecord(int recordUnit, String year, String month, String houseNo, String signature, int recordNo, int price) {
@@ -91,5 +104,13 @@ public class WaterRecord {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getTotalUnit() {
+        return totalUnit;
+    }
+
+    public void setTotalUnit(int totalUnit) {
+        this.totalUnit = totalUnit;
     }
 }

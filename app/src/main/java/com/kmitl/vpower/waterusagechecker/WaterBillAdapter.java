@@ -25,6 +25,7 @@ public class WaterBillAdapter extends RecyclerView.Adapter<WaterViewHolder> {
         waterViewHolder.month.setText(waterRecord.getMonth());
         waterViewHolder.price.setText(Integer.toString(waterRecord.getPrice()));
         waterViewHolder.meter.setText(Integer.toString(waterRecord.getRecordUnit()));
+        waterViewHolder.totalUnit.setText(Integer.toString(waterRecord.getTotalUnit()));
 
     }
 
