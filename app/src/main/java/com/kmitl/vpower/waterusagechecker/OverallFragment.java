@@ -23,15 +23,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -188,6 +194,12 @@ public class OverallFragment extends Fragment {
 
         final WaterRecordAdapter recordAdapter = new WaterRecordAdapter(getActivity(), R.layout.fragment_overall_item, waterRecords);
 
+//        recordAdapter.sort(new Comparator<WaterRecord>() {
+//            @Override
+//            public int compare(WaterRecord o1, WaterRecord o2) {
+//                return o1.compareTo(o2);
+//            }
+//        });
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
         checkData = 0;
@@ -195,13 +207,13 @@ public class OverallFragment extends Fragment {
         for (int i = 1; i < 41; i++ ) {
             Log.d("overall", "Before Loop " + intToStr(i));
             final int hN = i;
-
-            firebaseFirestore
+            DocumentReference docRef = firebaseFirestore
                     .collection("rooms")
                     .document("house_no " + intToStr(i))
                     .collection("water_usage")
-                    .document(recDate)
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    .document(recDate);
+
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult().exists()) {
@@ -236,6 +248,7 @@ public class OverallFragment extends Fragment {
 //                ).show();
 //            }
         }
+
         Log.d("overall", "End getValueDB");
     }
 

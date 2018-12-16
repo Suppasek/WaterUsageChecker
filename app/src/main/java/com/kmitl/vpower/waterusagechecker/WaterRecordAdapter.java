@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,6 +55,17 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
         amountText.setText(Integer.toString(record.getPrice()));
 
         return recordItem;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        this.waterRecords.sort(new Comparator<WaterRecord>() {
+            @Override
+            public int compare(WaterRecord o1, WaterRecord o2) {
+                return o1.compareTo(o2);
+            }
+        });
     }
 
     public List<WaterRecord> getWaterRecords() {
