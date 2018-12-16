@@ -225,6 +225,12 @@ public class OverallFragment extends Fragment {
         ListView recordTable = (ListView) getView().findViewById(R.id.fragment_overall_list);
 
         final WaterRecordAdapter recordAdapter = new WaterRecordAdapter(getActivity(), R.layout.fragment_overall_item, waterRecords);
+        recordAdapter.sort(new Comparator<WaterRecord>() {
+            @Override
+            public int compare(WaterRecord o1, WaterRecord o2) {
+                return o1.compare2To(o2);
+            }
+        });
 
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
@@ -244,15 +250,7 @@ public class OverallFragment extends Fragment {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult().exists()) {
                         checkData++;
-                        WaterRecord record = new WaterRecord(
-                      Integer.parseInt(task.getResult().get("recordUnit").toString()),
-                            task.getResult().get("year").toString(),
-                            task.getResult().get("month").toString(),
-                            task.getResult().get("houseNo").toString(),
-                            task.getResult().get("signature").toString(),
-                            Integer.parseInt(task.getResult().get("recordNo").toString()),
-                            Integer.parseInt(task.getResult().get("price").toString())
-                    );
+                        WaterRecord record = task.getResult().toObject(WaterRecord.class);
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
                         Log.d("overall", "There data from House No." + record.getHouseNo());

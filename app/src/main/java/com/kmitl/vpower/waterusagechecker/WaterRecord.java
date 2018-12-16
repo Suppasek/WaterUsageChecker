@@ -113,4 +113,10 @@ public class WaterRecord {
     public void setTotalUnit(int totalUnit) {
         this.totalUnit = totalUnit;
     }
+
+    public int compare2To(WaterRecord waterRecord) {
+        Integer temp1 = Integer.parseInt(this.houseNo);
+        Integer temp2 = Integer.parseInt(waterRecord.getHouseNo());
+        return temp1.compareTo(temp2);
+    }
 }
