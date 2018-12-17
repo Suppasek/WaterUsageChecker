@@ -44,14 +44,17 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
         TextView amountText = (TextView) recordItem.findViewById(R.id.fragment_overall_row_amount);
 
         WaterRecord record = waterRecords.get(position);
-        String totalPrice = NumberFormat.getNumberInstance(Locale.US).format(record.getRecordUnit() * record.getPrice());
-
-
 
         Log.d("adapter", "setThreeColumnINaRow");
+
+        String waterRate = "N/A";
+        if (record.getTotalUnit() != 0) {
+            waterRate = Integer.toString(record.getPrice()/record.getTotalUnit());
+        }
+
         roomText.setText(record.getHouseNo());
-        unitsText.setText(Integer.toString(record.getRecordUnit()));
-        unitPriceText.setText(Integer.toString(18));
+        unitsText.setText(Integer.toString(record.getTotalUnit()));
+        unitPriceText.setText(waterRate);
         amountText.setText(Integer.toString(record.getPrice()));
 
         return recordItem;
