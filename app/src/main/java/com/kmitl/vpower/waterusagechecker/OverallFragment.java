@@ -6,11 +6,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -57,10 +60,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.kmitl.vpower.waterusagechecker.R.color.colorAccent;
 
 public class OverallFragment extends Fragment {
 
@@ -149,21 +155,6 @@ public class OverallFragment extends Fragment {
         });
     }
 
-    private void initBackBtn() {
-        Button Backbtn = getView().findViewById(R.id.fragment_overall_back_btn);
-
-        Backbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_view, new MenuFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-    }
-
     private void initCSVBtn() {
         ImageView CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
 
@@ -173,6 +164,10 @@ public class OverallFragment extends Fragment {
                 File csvFile = null;
                 String recDate = dateSpinner.getSelectedItem().toString();
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
+                String[] monthYear = recDate.split("/");
+                int month = Integer.parseInt(monthYear[0]);
+                int year = Integer.parseInt(monthYear[1]);
+                recDate = year + "_" + month;
                 if (checkData > 0 && NEW_URL_CHECK) {
                     Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
                     csvFile = CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
@@ -280,16 +275,18 @@ public class OverallFragment extends Fragment {
     }
 
     private void createMonthSpinner() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM");
-        String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("_");
-        int currentYear = Integer.parseInt(currentYearMonth[0]);
-        int currentMonth = Integer.parseInt(currentYearMonth[1]);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
+        String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("/");
+        int currentMonth = Integer.parseInt(currentYearMonth[0]);
+        int currentYear = Integer.parseInt(currentYearMonth[1]);
         dateSpinner = getView().findViewById(R.id.fragment_overall_date_spinner);
+
         for (Integer y = currentYear; y > 2017 ; y--) {
             for (Integer m = currentMonth; m > 0; m--) {
-                monthList.add(intToStr(y) + "_" + intToStr(m));
+                monthList.add(intToStr(m) + "/" + intToStr(y));
             }
         }
+
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthList);
         dateSpinner.setAdapter(adapterMonth);
     }
@@ -389,6 +386,10 @@ public class OverallFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String recDate = monthList.get(position);
                 Log.d("overall", "Date was selected -> " + recDate);
+                String[] monthYear = recDate.split("/");
+                int month = Integer.parseInt(monthYear[0]);
+                int year = Integer.parseInt(monthYear[1]);
+                recDate = year + "_" + month;
                 NEW_URL_CHECK = true;
                 getValueDB(recDate);
             }
