@@ -2,6 +2,8 @@ package com.kmitl.vpower.waterusagechecker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -77,6 +79,10 @@ public class OverallFragment extends Fragment {
     private UploadTask mUploadTask;
     private FirebaseStorage firebaseStorage;
 
+    private static String downloadURL = "";
+
+    private static Boolean NEW_URL_CHECK = false;
+
     //merge complete
     public OverallFragment() {
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -116,10 +122,9 @@ public class OverallFragment extends Fragment {
         Log.d("overall", "In onActivityCreated");
         setToolbarTitle();
         setLogoutBtn();
-        setDialog();
+        setLogoutDialog();
         createMonthSpinner();
         setOnYearSelected();
-//        initBackBtn();
         initChangeRateBtn();
         initCSVBtn();
     }
@@ -160,19 +165,21 @@ public class OverallFragment extends Fragment {
         CSVbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File csvFile = null;
                 String recDate = dateSpinner.getSelectedItem().toString();
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
-                if (checkData > 0) {
+                if (checkData > 0 && NEW_URL_CHECK) {
                     Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
-                    File csvFile = CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
+                    csvFile = CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
                     uploadFromStream(csvFile);
+                } else {
+                    initUrlDownloadDialog(downloadURL);
                 }
             }
         });
     }
 
     private void uploadFromStream(File file) {
-//        Helper.showDialog(this);
         InputStream stream = null;
         try {
             stream = new FileInputStream(file);
@@ -184,18 +191,50 @@ public class OverallFragment extends Fragment {
         mUploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-//                Helper.dismissDialog();
-//                mTextView.setText(String.format("Failure: %s", exception.getMessage()));
                 Log.d("CSV", exception.getMessage());
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                Helper.dismissDialog();
-//                mTextView.setText(taskSnapshot.getDownloadUrl().toString());
+                downloadURL = taskSnapshot.getDownloadUrl().toString();
                 Log.d("CSV", "Success URL = " + taskSnapshot.getDownloadUrl().toString());
+                initUrlDownloadDialog(downloadURL);
+                NEW_URL_CHECK = false;
             }
         });
+    }
+
+    private void initUrlDownloadDialog(final String downloadURL) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.url_dialog, null);
+        builder.setView(view);
+
+        final EditText waterRate = (EditText) view.findViewById(R.id.url_dialog_download_url);
+
+        waterRate.setText(downloadURL);
+
+        builder.setPositiveButton("Copy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getContext().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Url ", downloadURL);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(),
+                        "Copied to Clipboard!!",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
     }
 
     private void initChangeRateBtn() {
@@ -308,7 +347,7 @@ public class OverallFragment extends Fragment {
         Log.d("overall", "End getValueDB");
     }
 
-    private void setDialog() {
+    private void setLogoutDialog() {
         logoutDialog = new Dialog(getActivity());
         logoutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         logoutDialog.setContentView(R.layout.logout_dialog);
@@ -343,7 +382,10 @@ public class OverallFragment extends Fragment {
         dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getValueDB(monthList.get(position));
+                String recDate = monthList.get(position);
+                Log.d("overall", "Date was selected -> " + recDate);
+                NEW_URL_CHECK = true;
+                getValueDB(recDate);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
