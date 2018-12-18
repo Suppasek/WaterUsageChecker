@@ -140,7 +140,7 @@ public class WaterRecordFragment extends Fragment {
 
                 roomText.setText(room);
                 monthText.setText(year + "/" + month);
-                unitText.setText(unitStr + " หน่วย");
+                unitText.setText(unitStr);
 
                 dialog.show();
 
@@ -380,13 +380,13 @@ public class WaterRecordFragment extends Fragment {
     }
 
     private void createData() {
-        for (Integer i = 1; i < 13; i++) {
+        for (Integer i = 1; i <= 12; i++) {
             monthList.add(i.toString());
         }
-        for (Integer i = 2018; i < 2038; i++) {
+        for (Integer i = 2018; i <= 2030; i++) {
             yearList.add(i.toString());
         }
-        for (Integer i = 1; i < 21; i++) {
+        for (Integer i = 1; i <= 20; i++) {
             roomList.add(i.toString());
         }
     }

@@ -31,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class WaterBillRecordFragment extends Fragment {
 
@@ -74,9 +75,11 @@ public class WaterBillRecordFragment extends Fragment {
     }
 
     private void createData() {
-        for (Integer i = 2018; i < 2038; i++) {
+
+        for (Integer i = 2018; i < 2020; i++) {
             yearList.add(i.toString());
         }
+
     }
 
     private void assignId() {
@@ -136,6 +139,14 @@ public class WaterBillRecordFragment extends Fragment {
                             Collections.reverse(bills);
                             setTextVisibility(exception, false);
                         }
+                        Collections.sort(bills, new Comparator<WaterRecord>() {
+                            @Override
+                            public int compare(WaterRecord lhs, WaterRecord rhs) {
+                                Integer month1 = Integer.parseInt(lhs.getMonth());
+                                Integer month2 = Integer.parseInt(rhs.getMonth());
+                                return month2.compareTo(month1);
+                            }
+                        });
                         waterBillAdapter.notifyDataSetChanged();
                     }
                 });

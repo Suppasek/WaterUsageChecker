@@ -66,7 +66,7 @@ public class WaterRecordAdapter extends ArrayAdapter<WaterRecord> {
         this.waterRecords.sort(new Comparator<WaterRecord>() {
             @Override
             public int compare(WaterRecord o1, WaterRecord o2) {
-                return o1.compare2To(o2);
+                return o1.compare2To(o2, true);
             }
         });
     }

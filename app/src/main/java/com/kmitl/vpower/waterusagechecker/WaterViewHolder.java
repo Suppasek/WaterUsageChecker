@@ -8,6 +8,7 @@ import android.widget.TextView;
 public class WaterViewHolder extends RecyclerView.ViewHolder {
 
     TextView month, price, unit, meter, totalUnit;
+    View border, border2;
 
     public WaterViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -16,5 +17,9 @@ public class WaterViewHolder extends RecyclerView.ViewHolder {
         price = itemView.findViewById(R.id.water_bill_price);
         meter = itemView.findViewById(R.id.water_bill_meter);
         totalUnit = itemView.findViewById(R.id.water_bill_total_unit);
+
+        border = itemView.findViewById(R.id.water_bill_borderlist);
+        border2 = itemView.findViewById(R.id.water_bill_borderlist2);
+
     }
 }

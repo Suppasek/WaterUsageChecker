@@ -114,9 +114,16 @@ public class WaterRecord {
         this.totalUnit = totalUnit;
     }
 
-    public int compare2To(WaterRecord waterRecord) {
-        Integer temp1 = Integer.parseInt(this.houseNo);
-        Integer temp2 = Integer.parseInt(waterRecord.getHouseNo());
-        return temp1.compareTo(temp2);
+    public int compare2To(WaterRecord waterRecord, boolean isHouse) {
+        if (isHouse) {
+            Integer temp1 = Integer.parseInt(this.houseNo);
+            Integer temp2 = Integer.parseInt(waterRecord.getHouseNo());
+            return temp1.compareTo(temp2);
+        }
+        else {
+            Integer temp1 = Integer.parseInt(this.month);
+            Integer temp2 = Integer.parseInt(waterRecord.getMonth());
+            return temp1.compareTo(temp2);
+        }
     }
 }

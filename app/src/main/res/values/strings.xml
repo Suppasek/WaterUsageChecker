@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Water Usage Checker</string>
     <string name="LOGIN">LOGIN</string> // btn
-    <string name="username">Username</string>
-    <string name="pass">Password</string>
+    <string name="username">  Username</string>
+    <string name="pass">  Password</string>
+    <string name="chooseyear">เลือกปีที่ต้องการ</string>
 </resources>

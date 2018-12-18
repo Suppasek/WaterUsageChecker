@@ -60,7 +60,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="เลขมิเตอร์น้ำ"
+        android:text="เลขมิเตอร์น้ำปัจจุบัน"
         android:textColor="@color/toolbarTitleColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
