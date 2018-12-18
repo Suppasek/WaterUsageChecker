@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "964861983354-djo1tf5ce2a1l8h6gscob1ql49090t72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kmitl.vpower.waterusagechecker",
+            "certificate_hash": "28f4a348203e3633b94b9302aca8129834a3dbf1"
+          }
+        },
+        {
           "client_id": "964861983354-h6evkc8vrvgqrt69ob1126p75kgn7eqs.apps.googleusercontent.com",
           "client_type": 3
         }

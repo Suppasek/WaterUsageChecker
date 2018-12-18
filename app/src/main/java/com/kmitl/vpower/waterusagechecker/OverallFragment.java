@@ -2,19 +2,33 @@ package com.kmitl.vpower.waterusagechecker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,17 +37,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.kmitl.vpower.waterusagechecker.R.color.colorAccent;
 
 public class OverallFragment extends Fragment {
 
@@ -52,11 +85,22 @@ public class OverallFragment extends Fragment {
 
     private ImageButton logoutBtn;
 
+    private StorageReference storageRef;
+    private StorageReference imageRef;
+    private UploadTask mUploadTask;
+    private FirebaseStorage firebaseStorage;
+
+    private static String downloadURL = "";
+
+    private static Boolean NEW_URL_CHECK = false;
+
     //merge complete
     public OverallFragment() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.firebaseFirestore = FirebaseFirestore.getInstance();
         this.waterRecords = new ArrayList<WaterRecord>();
+        this.firebaseStorage = FirebaseStorage.getInstance();
+        this.storageRef = firebaseStorage.getReference();
     }
 
     @Override
@@ -89,10 +133,10 @@ public class OverallFragment extends Fragment {
         Log.d("overall", "In onActivityCreated");
         setToolbarTitle();
         setLogoutBtn();
-        setDialog();
-        createMothSpinner();
-//        initBackBtn();
-        initShowBtn();
+        setLogoutDialog();
+        createMonthSpinner();
+        setOnYearSelected();
+        initChangeRateBtn();
         initCSVBtn();
     }
 
@@ -111,82 +155,154 @@ public class OverallFragment extends Fragment {
         });
     }
 
-    private void initBackBtn() {
-        Button Backbtn = getView().findViewById(R.id.fragment_overall_back_btn);
-
-        Backbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_view, new MenuFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-    }
-
     private void initCSVBtn() {
         ImageView CSVbtn = getView().findViewById(R.id.fragment_overall_csv_btn);
 
         CSVbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File csvFile = null;
                 String recDate = dateSpinner.getSelectedItem().toString();
                 Log.d("CSV", "Before CsvFileWriter recDtae = " + recDate);
-                if (checkData > 0) {
+                String[] monthYear = recDate.split("/");
+                int month = Integer.parseInt(monthYear[0]);
+                int year = Integer.parseInt(monthYear[1]);
+                recDate = year + "_" + month;
+                if (checkData > 0 && NEW_URL_CHECK) {
                     Log.d("CSV", "There are " + intToStr(checkData) + " records for CSV");
-                    CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
-                    Toast.makeText(getActivity(),
-                            "Success",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    csvFile = CsvFileWriter.writeCsvFile(recDate, waterRecords, getActivity(), getContext());
+                    uploadFromStream(csvFile);
                 } else {
-                    Log.d("CSV", "There are no data for CSV");
-                    Toast.makeText(getActivity(),
-                            "There are no data for this month.",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    initUrlDownloadDialog(downloadURL);
                 }
-
             }
         });
     }
 
-    private void initShowBtn() {
-        ImageView btnShow = getView().findViewById(R.id.fragment_overall_show_btn);
+    private void uploadFromStream(File file) {
+        InputStream stream = null;
+        try {
+            stream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        imageRef = storageRef.child("reports/" + file.getName());
+        mUploadTask = imageRef.putStream(stream);
+        mUploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("CSV", exception.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                downloadURL = taskSnapshot.getDownloadUrl().toString();
+                Log.d("CSV", "Success URL = " + taskSnapshot.getDownloadUrl().toString());
+                initUrlDownloadDialog(downloadURL);
+                NEW_URL_CHECK = false;
+            }
+        });
+    }
+
+    private void initUrlDownloadDialog(final String downloadURL) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.url_dialog, null);
+        builder.setView(view);
+
+        final EditText urlText = (EditText) view.findViewById(R.id.url_dialog_download_url);
+
+        urlText.setText(downloadURL);
+
+        builder.setPositiveButton("Copy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getContext().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Url ", downloadURL);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(),
+                        "Copied to Clipboard!!",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+    }
+
+    private void initChangeRateBtn() {
+        ImageView btnShow = getView().findViewById(R.id.fragment_overall_change_rate_btn);
 
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getValueDB();
+                final AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getContext());
+                LayoutInflater inflater = getLayoutInflater();
+
+                View view = inflater.inflate(R.layout.change_rate_dialog, null);
+                builder.setView(view);
+
+                final TextView dialogMessage = (TextView) view.findViewById(R.id.change_rate_dialog_message);
+                final EditText waterRate = (EditText) view.findViewById(R.id.change_rate_water_rate);
+
+                dialogMessage.setText("กรุณาใส่อัตราค่าน้ำที่ต้องการ");
+
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String waterRateStr = waterRate.getText().toString();
+                        setRate(waterRateStr);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.show();
             }
         });
     }
 
-    private void createMothSpinner() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM");
-        String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("_");
-        int currentYear = Integer.parseInt(currentYearMonth[0]);
-        int currentMonth = Integer.parseInt(currentYearMonth[1]);
+    private void createMonthSpinner() {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
+        String[] currentYearMonth = sdf.format(Calendar.getInstance().getTime()).split("/");
+        int currentMonth = Integer.parseInt(currentYearMonth[0]);
+        int currentYear = Integer.parseInt(currentYearMonth[1]);
         dateSpinner = getView().findViewById(R.id.fragment_overall_date_spinner);
+
         for (Integer y = currentYear; y > 2017 ; y--) {
             for (Integer m = currentMonth; m > 0; m--) {
-                monthList.add(intToStr(y) + "_" + intToStr(m));
+                monthList.add(intToStr(m) + "/" + intToStr(y));
             }
         }
+
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, monthList);
         dateSpinner.setAdapter(adapterMonth);
     }
 
-    public void getValueDB() {
-        Log.d("overall", "In getValueDB");
-
-        String recDate = dateSpinner.getSelectedItem().toString();
+    public void getValueDB(String recDate) {
+        Log.d("overall", "In getValueDB\nrecDate = " + recDate);
 
         ListView recordTable = (ListView) getView().findViewById(R.id.fragment_overall_list);
 
         final WaterRecordAdapter recordAdapter = new WaterRecordAdapter(getActivity(), R.layout.fragment_overall_item, waterRecords);
+        recordAdapter.sort(new Comparator<WaterRecord>() {
+            @Override
+            public int compare(WaterRecord o1, WaterRecord o2) {
+                return o1.compare2To(o2);
+            }
+        });
 
         recordTable.setAdapter(recordAdapter);
         waterRecords.clear();
@@ -195,51 +311,45 @@ public class OverallFragment extends Fragment {
         for (int i = 1; i < 41; i++ ) {
             Log.d("overall", "Before Loop " + intToStr(i));
             final int hN = i;
-
-            firebaseFirestore
+            DocumentReference docRef = firebaseFirestore
                     .collection("rooms")
                     .document("house_no " + intToStr(i))
                     .collection("water_usage")
-                    .document(recDate)
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    .document(recDate);
+
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult().exists()) {
                         checkData++;
-                        WaterRecord record = new WaterRecord(
-                      Integer.parseInt(task.getResult().get("recordUnit").toString()),
-                            task.getResult().get("year").toString(),
-                            task.getResult().get("month").toString(),
-                            task.getResult().get("houseNo").toString(),
-                            task.getResult().get("signature").toString(),
-                            Integer.parseInt(task.getResult().get("recordNo").toString()),
-                            Integer.parseInt(task.getResult().get("price").toString())
-                    );
+                        WaterRecord record = task.getResult().toObject(WaterRecord.class);
                         waterRecords.add(record);
                         recordAdapter.notifyDataSetChanged();
                         Log.d("overall", "There data from House No." + record.getHouseNo());
                     }else {
                         Log.d("overall", "No Data for House No." + intToStr(hN));
                     }
-
+                    if (hN == 40) {
+                        if (checkData == 0) {
+                            Toast.makeText(getActivity(),
+                                    "No Data",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        } else if (checkData > 0) {
+                            Toast.makeText(getActivity(),
+                                    "Success",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    }
                 }
             });
-//            if (checkData > 0) {
-//                Toast.makeText(getActivity(),
-//                        "No data.",
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            } else if (checkData == 0) {
-//                Toast.makeText(getActivity(),
-//                        "Success " + intToStr(checkData) + " " + intToStr(0),
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//            }
         }
+
         Log.d("overall", "End getValueDB");
     }
 
-    private void setDialog() {
+    private void setLogoutDialog() {
         logoutDialog = new Dialog(getActivity());
         logoutDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         logoutDialog.setContentView(R.layout.logout_dialog);
@@ -268,6 +378,62 @@ public class OverallFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setOnYearSelected() {
+        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String recDate = monthList.get(position);
+                Log.d("overall", "Date was selected -> " + recDate);
+                String[] monthYear = recDate.split("/");
+                int month = Integer.parseInt(monthYear[0]);
+                int year = Integer.parseInt(monthYear[1]);
+                recDate = year + "_" + month;
+                NEW_URL_CHECK = true;
+                getValueDB(recDate);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void setRate(final String newRate) {
+        firebaseFirestore.collection("Water Rates").orderBy("recordNo", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+//                    Integer rate = Integer.parseInt(task.getResult().getDocuments().get(0).get("rate").toString());
+                    Integer recordNo = Integer.parseInt(task.getResult().getDocuments().get(0).get("recordNo").toString()) + 1;
+                    String newRecordNo = recordNo.toString();
+
+                    Map<String, Object> record = new HashMap<>();
+                    record.put("rate", newRate);
+                    record.put("recordNo", newRecordNo);
+
+                    firebaseFirestore.collection("Water Rates").document("record " + newRecordNo).set(record)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(getActivity(),
+                                            "New water rate was saved",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(),
+                                    "Failed to save new water rate",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     public String intToStr(int number) {

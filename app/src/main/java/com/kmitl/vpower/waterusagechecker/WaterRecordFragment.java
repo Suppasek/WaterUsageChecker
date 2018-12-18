@@ -82,7 +82,6 @@ public class WaterRecordFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_water_record, container, false);
     }
 
@@ -321,14 +320,15 @@ public class WaterRecordFragment extends Fragment {
     private void pushRecord() {
         String monthFormat = year + "_" + month;
         int unit = Integer.parseInt(unitStr);
-        int price = (unit - previousUnit) * rate;
+        int totalUnit = (unit - previousUnit);
+        int price = totalUnit * rate;
         Log.wtf("WRF", unit + " - " + previousUnit + " * " + rate);
         if (recordNo == 1 || (unit >= previousUnit)) {
             if (previousRecordNo != 0) {
-                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), previousRecordNo, price);
+                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), previousRecordNo, price, totalUnit);
                 previousRecordNo = 0;
             } else {
-                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price);
+                record = new WaterRecord(unit, year, month, room, user.getDisplayName(), recordNo, price, totalUnit);
             }
             mdb.collection("rooms")
                     .document("house_no " + room)
